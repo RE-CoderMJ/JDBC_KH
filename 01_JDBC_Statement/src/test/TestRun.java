@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 public class TestRun {
 
@@ -63,7 +64,7 @@ public class TestRun {
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
 		
 			// 3) Statement 객체 생성
-			stmt = conn.createStatement(); // 여기 다시듣기
+			stmt = conn.createStatement(); // statement는 new로 생성못함. interface이기 때문!
 			
 			// 4, 5) sql문 전달하면서 실행 후 결과 받기 (처리된 행수)
 			result = stmt.executeUpdate(sql);
@@ -80,7 +81,7 @@ public class TestRun {
 		} catch (ClassNotFoundException e) {
 			//System.out.println("OracleDriver클래스를 찾지 못했습니다.");
 			e.printStackTrace();
-		} catch (SQLException e) { //sqlexception이 뭔지?
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			
