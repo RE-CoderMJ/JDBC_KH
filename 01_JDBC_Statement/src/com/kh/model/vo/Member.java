@@ -5,7 +5,8 @@ import java.sql.Date;
 /*
  * * VO (Value Object)
  *   한 명의 회원(DB 테이블의 한 행의 데이터들)에 대한 데이터들을 기록할 수 있는 저장용 객체
- */ //나만의 자료형? 다시듣기
+ *   여러가지 타입을 한꺼번에 담을 수 있는 나만의 타입을 만드는 것!(클래스를 만드는 것)
+ */ 
 
 public class Member {
 
@@ -22,7 +23,6 @@ public class Member {
 	private String address;
 	private String hobby;
 	private Date enrollDate; // java.sql.Date import해야됨!
-	// 한번에 지우는 방법!?
 	
 	// 생성자부
 	// 기본생성자, 매개변수생성자

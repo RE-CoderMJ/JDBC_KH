@@ -1,8 +1,10 @@
 package com.kh.view;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.kh.controller.MemberController;
+import com.kh.model.vo.Member;
 
 // View : 사용자가 보게될 시각적인 요소(화면) 출력 및 입력
 public class MemberMenu {
@@ -36,10 +38,14 @@ public class MemberMenu {
 			switch(menu) {
 			case 1: inputMember(); break;
 			case 2: mc.selectList(); break;
-			case 3: /*  */ break;
-			case 4: /*  */ break;
-			case 5: /*  */ break;
-			case 6: /*  */ break;
+			case 3: String userId = inputMemberId(); 
+					mc.selectByUserId(userId);
+					break;
+			case 4: String keyword = inputMemberName();
+					mc.selectByUserName(keyword);
+					break;
+			case 5: updateMember(); break;
+			case 6: /* DELETE FROM MEMBER WHERE USERID = '사용자가입력한아이디값' */ break;
 			case 0: System.out.println("이용해주셔서 감사합니다."); return;
 			default: System.out.println("메뉴를 잘못입력하셨습니다. 다시 입력해주세요.");
 			}
@@ -89,12 +95,48 @@ public class MemberMenu {
 		
 	}
 	
+	/**
+	 * 사용자에게 회원 아이디 입력받은 후 그때 입력된 값을 반환시켜주는 메소드
+	 * @return 사용자가 입력한 아이디값
+	 */
+	public String inputMemberId() {
+		System.out.print("\n회원 아이디 입력 : ");
+		return sc.nextLine();
+	}
 	
+	/**
+	 * 사용자에게 검색할 회원명(키워드) 입력받은 후 그때 입력된 값을 반환시켜주는 메소드
+	 * @return  사용자가 입력한 회원명(키워드)
+	 */
+	public String inputMemberName() {
+		System.out.print("\n회원 이름(키워드) 입력 : ");
+		return sc.nextLine();
+	}
 	
-	
-	
-	
-	
+	/**
+	 * 사용자에게 변경할 정보들(비번, 이메일, 전화번호, 주소)과 해당 회원의 아이디 입력받는 화면
+	 */
+	public void updateMember() {
+		
+		System.out.println("\n==== 회원 정보 변경 ====");
+		
+		// 회원 아이디, 변경할 비밀번호, 변경할 이메일, 변경할 전화번호, 변경할 주소)
+		String userId = inputMemberId();
+		
+		System.out.print("변경할 암호 : ");
+		String userPwd = sc.nextLine();
+		
+		System.out.print("변경할 이메일 : ");
+		String email = sc.nextLine();
+		
+		System.out.print("변경할 전화번호 : ");
+		String phone = sc.nextLine();
+		
+		System.out.print("변경할 주소 : ");
+		String address = sc.nextLine();
+		
+		mc.updateMember(userId, userPwd, email, phone, address);
+	}
 	
 	// --------------------------- 응답화면 -------------------------------
 	/**
@@ -111,6 +153,39 @@ public class MemberMenu {
 	 */
 	public void displayFail(String message) {
 		System.out.println("\n서비스 요청 실패 : " + message);
+	}
+	
+	/**
+	 * 조회 서비스 요청시 조회결과가 없을 경우 사용자가 보게될 응답화면
+	 * @param message
+	 */
+	public void displayNoData(String message) {
+		System.out.println("\n" + message);
+	}
+	
+	public void displayMemberList(ArrayList<Member> list) {
+		System.out.println("\n조회된 데이터는 다음과 같습니다.\n");
+		
+		// for loop문
+		/*
+		for(int i = 0; i < list.size() - 1; i++) {
+			System.out.println(list.get(i));
+		}
+		*/
+		
+		// for each문 (향상된 for문)
+		for(Member m : list) { // m = list.get(0); => m = list.get(1); ...
+			System.out.println(m);
+		}
+	}
+	
+	/**
+	 * 조회 서비스 요청시 조회결과가 한 행일 경우 사용자가 보게될 응답화면
+	 * @param m
+	 */
+	public void displayMember(Member m) {
+		System.out.println("\n조회된 데이터는 다음과 같습니다.\n");
+		System.out.println(m);
 	}
 	
 }

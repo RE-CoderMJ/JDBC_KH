@@ -41,7 +41,6 @@ public class MemberDao {
 		
 		//System.out.println(sql);
 		
-		// 1) jdbc driver 등록
 		try {
 			// 1) jdbc driver 등록
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -74,10 +73,14 @@ public class MemberDao {
 			
 		}
 		
-		return result; // 1 아니면 0 //다시듣기
+		return result; // 1 아니면 0
 	}
 	
-	public void selectList() {
+	/**
+	 * 사용자가 요청한 회원 전체 조회를 처리해주는 메소드
+	 * @return 조회된 결과가 있었으면 조회된 결과들이 담겨있는 list | 조회된 결과가 없었으면 텅 빈 list
+	 */
+	public ArrayList<Member> selectList() {
 		// select문 (여러행조회) => ResultSet객체 => ArrayList에 차곡차곡 담기
 		
 		// 필요한 변수들 셋팅
@@ -113,20 +116,186 @@ public class MemberDao {
 				m.setAge(rset.getInt("age"));
 				m.setEmail(rset.getString("email"));
 				m.setPhone(rset.getString("phone"));
+				m.setAddress(rset.getString("address"));
 				m.setHobby(rset.getString("hobby"));
 				m.setEnrollDate(rset.getDate("enrolldate"));
 				// 현재 참조하고 있는 행에 대한 모든 컬럼에 대한 데이터들을 한 Member객체에 담기 끝!
 				
 				list.add(m); // 리스트에 해당 회원 객체 차곡차곡담기				
 			}
+			
+			// 반복문이 다 끝난 시점에
+			// 만약에 조회된 데이터가 없었다면 list가 텅 빈 상태일거임!!
+			// 만약에 조회된 데이터가 있었다면 list에 뭐라도 담겨있을 것!!
 					
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				// 7) 다쓴자원반납
+				rset.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
+		return list; // 텅빈리스트 | 뭐라도 담겨있는 리스트
 		
 	}
+	
+	
+	/**
+	 * 사용자의 아이디로 회원 검색 요청 처리해주는 메소드
+	 * @param userId	사용자가 입력한 검색하고자하는 회원 아이디값
+	 * @return  검색된 결과가 있었으면 생성된 Member객체 | 검색된 결과가 없었으면 null
+	 */
+	public Member selectByUserId(String userId) {
+		// select문(한행) => ResultSet객체 => Member객체
+		
+		Member m = null;
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		
+		// 실행할 sql문 (완성된 형태로)
+		// SELECT * FROM MEMBER WHERE USERID = 'XXX'
+		String sql = "SELECT * FROM MEMBER WHERE USERID = '" + userId + "'";
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC","JDBC");
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(sql);
+			
+			if(rset.next()) {
+				// 조회됐다면 해당 조회된 컬럼 값들을 뽑아서 한 Member 객체의 각 필드에 담기
+				m = new Member(rset.getInt("userno"),
+							   rset.getString("userid"),
+							   rset.getString("userpwd"),
+							   rset.getString("username"),
+							   rset.getString("gender"),
+							   rset.getInt("age"),
+							   rset.getString("email"),
+							   rset.getString("phone"),
+							   rset.getString("address"),
+							   rset.getString("hobby"),
+							   rset.getDate("enrolldate"));
+			}
+			
+			// 위의조건문 다 끝난 시점에
+			// 만약에 조회된 데이터가 없었을 경우 => m은 null 상태
+			// 만약에 조회된 데이터가 있었을 경우 => m은 생성된 객체
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rset.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return m;
+	}
+	
+	public ArrayList<Member> selectByUserName(String keyword){
+		// select문(여러행) => ResultSet객체  => ArrayList
+		ArrayList<Member> list = new ArrayList<>(); // 텅 빈 리스트
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;		
+		
+		String sql = "SELECT * FROM MEMBER WHERE USERNAME LIKE '%" + keyword + "%'";
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(sql);
+			
+			while(rset.next()) {
+				list.add(new Member(rset.getInt("userno"),
+									rset.getString("userid"),
+									rset.getString("userpwd"),
+									rset.getString("username"),
+									rset.getString("gender"),
+									rset.getInt("age"),
+									rset.getString("email"),
+									rset.getString("phone"),
+									rset.getString("address"),
+									rset.getString("hobby"),
+									rset.getDate("enrolldate")));
+			}
+			
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rset.close();
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
+	public int updateMember(Member m) {
+		
+		Connection conn = null;
+		Statement stmt = null;
+		int result = 0;
+		
+		String sql = "UPDATE MEMBER "
+					+   "SET USERPWD = '" + m.getUserPwd() + "' "
+					+ 	  ", EMAIL = '"	  + m.getEmail()   + "' " 
+					+ 	  ", PHONE = '"	  + m.getPhone()   + "' " 
+					+     ", ADDRESS = '" + m.getAddress() + "' " 
+					+ "WHERE USERID = '"  + m.getUserId()  + "'";
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
+			stmt = conn.createStatement();
+			result = stmt.executeUpdate(sql);
+			
+			if(result > 0) {
+				conn.commit();
+			}else {
+				conn.rollback();
+			}
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
+	
 	
 }
