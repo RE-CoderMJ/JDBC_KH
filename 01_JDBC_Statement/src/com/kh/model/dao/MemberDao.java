@@ -297,5 +297,49 @@ public class MemberDao {
 		return result;
 	}
 	
+	/**
+	 * 사용자가 입력한 아이디값 전달 바다서 회원 탈퇴 시켜주는 메소드
+	 * @param userId  사용자가 입력한 아이디값
+	 * @return  처리된 행 수
+	 */
+	public int deleteMember(String userId) {
+		/* DELETE FROM MEMBER WHERE USERID = '사용자가입력한아이디값' */
+		// delete문 => 처리된 행수=> 트랜잭션 처리
+		int result = 0;
+		
+		Connection conn = null;
+		Statement stmt = null;
+		
+		String sql = "DELETE FROM MEMBER WHERE USERID = '" + userId + "'";
+		
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "JDBC", "JDBC");
+			stmt = conn.createStatement();
+			result = stmt.executeUpdate(sql);
+			
+			if(result > 0) {
+				conn.commit();
+			}else {
+				conn.rollback();
+			}
+	
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+		
+	}
+	
 	
 }

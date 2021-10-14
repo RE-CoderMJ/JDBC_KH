@@ -107,4 +107,19 @@ public class MemberController {
 			new MemberMenu().displayFail("회원 정보 변경에 실패했습니다");
 		}
 	}
+	
+	/**
+	 * 회원 탈퇴 요청 처리해주는 메소드
+	 * @param userId  사용자가 입력한 탈퇴시키고자 하는 회원 아이디값
+	 */
+	public void deleteMember(String userId) {
+		
+		int result = new MemberDao().deleteMember(userId);
+		
+		if(result > 0) {
+			new MemberMenu().displaySuccess("성공적으로 회원 탈퇴 되었습니다.");
+		}else {
+			new MemberMenu().displayFail("회원 탈퇴에 실패했습니다.");
+		}
+	}
 }

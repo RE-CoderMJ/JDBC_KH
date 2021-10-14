@@ -38,14 +38,17 @@ public class MemberMenu {
 			switch(menu) {
 			case 1: inputMember(); break;
 			case 2: mc.selectList(); break;
-			case 3: String userId = inputMemberId(); 
-					mc.selectByUserId(userId);
+			case 3: //String userId = inputMemberId(); 
+					//mc.selectByUserId(userId);
+					mc.selectByUserId(inputMemberId());
 					break;
-			case 4: String keyword = inputMemberName();
-					mc.selectByUserName(keyword);
+			case 4: //String keyword = inputMemberName();
+					//mc.selectByUserName(keyword);
+					mc.selectByUserName(inputMemberName());
 					break;
 			case 5: updateMember(); break;
-			case 6: /* DELETE FROM MEMBER WHERE USERID = '사용자가입력한아이디값' */ break;
+			case 6: mc.deleteMember(inputMemberId());
+					break;
 			case 0: System.out.println("이용해주셔서 감사합니다."); return;
 			default: System.out.println("메뉴를 잘못입력하셨습니다. 다시 입력해주세요.");
 			}
