@@ -1,6 +1,6 @@
 package test;
 
-import java.sql.Connection;
+import java.sql.Connection; // jdbc관련 ??
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

@@ -72,7 +72,6 @@ public class MemberDao {
 			
 			// 4, 5) sql문 실행 및 결과받기
 			result = pstmt.executeUpdate();
-			// 이부분 다시듣기
 			
 			// 6) 트랜잭션 처리
 			if(result > 0) {
